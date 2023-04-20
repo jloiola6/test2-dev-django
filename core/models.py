@@ -2,6 +2,24 @@ from django.db import models
 
 # Create your models here.
 
+class DiscountRules(models.Model):    
+    type_options = (
+        ('Residencial', 'Residencial'),
+        ('Comercial', 'Comercial'),
+        ('Industrial', 'Industrial'),
+    )
+    
+    tax_options = (
+        (90, '90%'),
+        (95, '95%'),
+        (99, '99%'),
+    )
+
+    consumer_type = models.CharField("Tipo de consumo", max_length=25, choices=type_options)
+    consumption_range = models.CharField("Intervalo", max_length=25)
+    cover_value = models.FloatField("Cobertura (%)", choices=tax_options)
+    discount_value = models.FloatField("Desconto")
+
 
 class Consumer(models.Model):
     name = models.CharField("Nome do Consumidor", max_length=128)
@@ -11,7 +29,12 @@ class Consumer(models.Model):
     state = models.CharField("Estado", max_length=128)
     consumption = models.IntegerField("Consumo(kWh)", blank=True, null=True)
     distributor_tax = models.FloatField("Tarifa da Distribuidora", blank=True, null=True)
-    #  create the foreign key for discount rule model here
+    discount_rules = models.OneToOneField(DiscountRules, on_delete=models.DO_NOTHING)
+
+    def __str__(self) -> str:
+        return self.name
+
+
 
 
 # TODO: Create the model DiscountRules below
